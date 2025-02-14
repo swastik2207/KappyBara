@@ -71,7 +71,7 @@ export default function Dashboard() {
                   <h2 className="text-lg font-semibold">{title}</h2>
                   <p className="text-sm text-gray-800">Priority: {priority}</p>
                   <p className="text-gray-600">{description}</p>
-                  <p className="text-sm text-gray-500">Due Date: {new Date(dueDate).toLocaleDateString()}</p>
+                  <p className="text-sm text-gray-500">Due Date: {new Date(dueDate!).toLocaleDateString()}</p>
                   <Progress value={status === "completed" ? 100 : status === "in-progress" ? 50 : 0} />
                 </CardContent>
               </Card>

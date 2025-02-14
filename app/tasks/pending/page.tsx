@@ -45,16 +45,19 @@ export default function PendingTasksPage() {
 
   const handleUpdate = (updatedTask:Task) => {
     // Perform update logic here
-    
+    if(updatedTask.id){
+      const { id, ...taskData } = updatedTask
     mutate({
-      taskId: updatedTask.id, taskData: { ...updatedTask }
+      taskId:updatedTask.id,taskData: { ...taskData }
     },
     {
       onSuccess: () => {
-        refetch() // Fetch updated tasks instead of clearing them
+        refetch() 
+        setIsModalOpen(false);// Fetch updated tasks instead of clearing them
       },
     });
-    setIsModalOpen(false);
+  }
+    
     
   };
 
@@ -86,7 +89,7 @@ export default function PendingTasksPage() {
           <CardContent>
             <p className="text-gray-600">{task.description}</p>
             <p className="text-sm text-gray-400 mt-2">
-              DeadLine: {new Date(task.dueDate).toLocaleDateString()}
+              DeadLine: {new Date(task.dueDate!).toLocaleDateString()}
             </p>
 
             <div className="mt-4">

@@ -5,13 +5,6 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { auth } from "@clerk/nextjs/server";
 
-const updateTaskSchema = z.object({
-  title: z.string().min(3).optional(),
-  description: z.string().optional(),
-  priority: z.enum(["low", "medium", "high"]),
-  status: z.enum(["pending", "in-progress", "completed"]).optional(),
-  dueDate: z.string().optional(),
-});
 
 export async function PATCH(
   req: NextRequest,
@@ -32,18 +25,16 @@ export async function PATCH(
     const body = await req.json();
 
     // ✅ Convert `dueDate` properly
+    let parsedDueDate: Date | null = null;
     if (body.dueDate) {
-      body.dueDate = new Date(body.dueDate);
+      const tempDate = new Date(body.dueDate);
+      if (!isNaN(tempDate.getTime())) {
+        parsedDueDate = tempDate;
+      } else {
+        return NextResponse.json({ success: false, message: "Invalid dueDate format" }, { status: 400 });
+      }
     }
-
-    // ✅ Validate request data
-    const parsedData = updateTaskSchema.safeParse(body);
-    if (!parsedData.success) {
-      return NextResponse.json(
-        { success: false, message: parsedData.error.errors },
-        { status: 400 }
-      );
-    }
+    const parsedData=body;
 
     const existingTask = await db
       .select()
@@ -57,21 +48,23 @@ export async function PATCH(
       );
     }
 
+
+
     // ✅ Define separate objects for updating and archiving tasks
     const taskToUpdate = {
-      title: parsedData.data.title ?? existingTask[0].title,
-      description: parsedData.data.description ?? existingTask[0].description,
-      priority: parsedData.data.priority ?? existingTask[0].priority,
-      status: parsedData.data.status ?? existingTask[0].status,
-      dueDate: parsedData.data.dueDate ? new Date(parsedData.data.dueDate) : null
+      title: parsedData.title ?? existingTask[0].title,
+      description: parsedData.description ?? existingTask[0].description,
+      priority: parsedData.priority ?? existingTask[0].priority,
+      status: parsedData.status ?? existingTask[0].status,
+      dueDate: parsedDueDate ? parsedDueDate : null
     };
 
-    if (parsedData.data.status === "completed") {
+    if (parsedData.status === "completed") {
       const taskToArchive = {
         id: existingTask[0].id,
         userId: existingTask[0].userId,
         ...taskToUpdate,
-        archivedAt: new Date(), // ✅ Add archivedAt only when moving to archive
+        archivedAt:new Date() , // ✅ Add archivedAt only when moving to archive
       };
 
       await db.insert(taskArchive).values(taskToArchive);

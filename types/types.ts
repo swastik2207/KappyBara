@@ -1,10 +1,11 @@
 export interface Task {
-    id: string;
+    id?: string;
     title: string;
     description:string;
     status:string
     priority: "high" | "medium" | "low";
-    dueDate: string;
+    dueDate?: string;
+    archivedAt?:string;
   }
   
 export interface TaskFormProps {
@@ -12,3 +13,4 @@ export interface TaskFormProps {
   onClose: () => void;
   onAddTask: (task: Task) => void;
 }
+

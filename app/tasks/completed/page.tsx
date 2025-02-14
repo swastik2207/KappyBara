@@ -10,7 +10,7 @@ export default function CompletedTasks() {
 
 
   const { data: fetchedTasks = [], isLoading, isError, refetch } = useFetchCompletedTasks();
-
+  console.log(fetchedTasks)
 
   return (
     <div className="p-4 space-y-4">
@@ -34,7 +34,7 @@ export default function CompletedTasks() {
           <CardContent>
             <p className="text-gray-600">{task.description}</p>
             <p className="text-sm text-gray-400 mt-2">
-              Completed on: {new Date(task.dueDate).toLocaleDateString()}
+              Completed on: {new Date(task.archivedAt!).toLocaleDateString()  }
             </p>
           </CardContent>
         </Card>

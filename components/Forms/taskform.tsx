@@ -1,14 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { X } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
 import Modal from "react-modal";
 import { TaskFormProps, Task } from "@/types/types";
+import { useCreateTask } from "@/hooks/useCreateTask";
 
 export default function TaskForm({ isOpen, onClose, onAddTask }: TaskFormProps) {
- 
+  const { mutate, isPending } = useCreateTask(); // ✅ Hook to create tasks
+
   const [newTask, setNewTask] = useState<Task>({
     id: "",
     title: "",
@@ -22,16 +24,19 @@ export default function TaskForm({ isOpen, onClose, onAddTask }: TaskFormProps) 
     e.preventDefault();
     if (!newTask.title.trim()) return;
 
-    onAddTask(newTask);
-    setNewTask({
-      id: "",
-      title: "",
-      description: "",
-      priority: "medium",
-      status: "pending",
-      dueDate: "",
+    mutate(newTask, {
+      onSuccess: () => {
+        setNewTask({
+          id: "",
+          title: "",
+          description: "",
+          priority: "medium",
+          status: "pending",
+          dueDate: "",
+        });
+        onClose(); // ✅ Close modal on success
+      },
     });
-    onClose();
   };
 
   return (
@@ -92,8 +97,8 @@ export default function TaskForm({ isOpen, onClose, onAddTask }: TaskFormProps) 
           Mark as Completed
         </label>
 
-        <Button type="submit" className="w-full">
-          Add Task
+        <Button type="submit" className="w-full" disabled={isPending}>
+          {isPending ? <Loader2 className="animate-spin mr-2" size={18} /> : "Add Task"}
         </Button>
       </form>
     </Modal>
