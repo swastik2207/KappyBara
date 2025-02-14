@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { tasks, Task } from "@/db/schema";
-import { gt, lte, asc,and } from "drizzle-orm";
+import { gt, lte, asc,and, eq } from "drizzle-orm";
 import { redis } from "@/lib/redis";
+import {auth} from "@clerk/nextjs/server"
 
 const CACHE_KEY = "upcoming_tasks";
 
@@ -10,6 +11,10 @@ const CACHE_KEY = "upcoming_tasks";
 export async function GET() {
   try {
     //check cache first
+       const {userId}=await auth();
+       if(!userId){
+        throw new Error(" Access Denied")
+       }
     const cachedData = await redis.get(CACHE_KEY);
     if (cachedData && typeof cachedData==="string") {
     
@@ -28,7 +33,9 @@ export async function GET() {
       .select()
       .from(tasks)
       .where(and(gt(tasks.dueDate, today),
-      lte(tasks.dueDate, fiveDaysLater)))
+      lte(tasks.dueDate, fiveDaysLater),
+       eq(tasks.userId,userId)),
+    )
       .orderBy(asc(tasks.dueDate)); 
 
 

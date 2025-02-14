@@ -8,7 +8,7 @@ import { eq } from "drizzle-orm";
 export async function GET() {
   try {
     const { userId } = await auth();
-
+  
     if (!userId) {
       return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
