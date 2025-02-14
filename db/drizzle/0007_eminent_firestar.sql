@@ -1,0 +1,1 @@
+CREATE TYPE "public"."priority" AS ENUM('high', 'medium', 'low');
