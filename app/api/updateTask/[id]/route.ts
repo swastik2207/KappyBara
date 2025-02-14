@@ -11,9 +11,9 @@ const updateTaskSchema = z.object({
   status: z.enum(["pending", "in-progress", "completed"]).optional(),
   dueDate: z.date().optional(), // Accepts Date type for validation
 });
-export async function PATCH(req: Request, context: { params: { id: string } }) {
+export async function PATCH(req: Request, {params}: { params: { id: string } }) {
   try {
-    const { params } = context; // Ensure params is properly accessed
+  
     const taskId = params.id; 
     const {userId}=await auth();
    
