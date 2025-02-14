@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { Plus } from "lucide-react";
+import { Plus, Loader2 } from "lucide-react";
 import dynamic from "next/dynamic";
 import TaskCalendar from "@/components/taskCalendar";
 import { Task } from "@/types/types";
@@ -18,7 +18,7 @@ const TaskForm = dynamic(() => import("@/components/Forms/taskform"), { ssr: fal
 export default function Dashboard() {
   const router = useRouter();
   const { mutate, isPending } = useCreateTask();
-  const { data: recentTasks = [], isLoading, isError, refetch } = useFetchRecentTasks(); // Ensure recentTasks is an array
+  const { data: recentTasks = [], isLoading, isError, refetch } = useFetchRecentTasks();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
@@ -27,7 +27,8 @@ export default function Dashboard() {
 
     mutate(task, {
       onSuccess: () => {
-        refetch(); // Fetch updated tasks instead of clearing them
+        refetch();
+        setIsFormOpen(false);
       },
     });
   };
@@ -38,7 +39,7 @@ export default function Dashboard() {
       <p className="text-center text-gray-600">Organize your tasks efficiently, track deadlines, and enhance productivity.</p>
       
       <Button onClick={() => setIsFormOpen(true)} className="fixed top-4 right-4 z-50 flex items-center gap-2">
-        <Plus size={18} /> Add Task
+        {isPending ? <Loader2 className="animate-spin" size={18} /> : <Plus size={18} />} Add Task
       </Button>
 
       {isFormOpen && <TaskForm isOpen={isFormOpen} onClose={() => setIsFormOpen(false)} onAddTask={addTask} />}
@@ -61,7 +62,7 @@ export default function Dashboard() {
             <p className="text-gray-400">No recent tasks</p>
           )}
 
-          <h2 className="text-xl font-semibold mt-4">Upcoming Task Deadlines</h2>
+          <h2 className="text-xl font-semibold mt-4">Upcoming Task Deadlines (Within Next 5 Days)</h2>
           <p className="text-gray-600">Stay ahead by tracking your upcoming task deadlines efficiently.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {recentTasks.map(({ id, title, priority, status, description, dueDate }) => (

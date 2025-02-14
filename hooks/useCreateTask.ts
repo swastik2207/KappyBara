@@ -36,7 +36,8 @@ export const useCreateTask = () => {
       return createTask(task, token);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["tasks"] }); //  Refresh the task list
+      queryClient.invalidateQueries({ queryKey: ["tasks"] }); 
+      queryClient.invalidateQueries({queryKey:["recenttasks"]})//  Refresh the task list
     },
   });
 };
