@@ -1,16 +1,16 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
-// Define routes that should be protected
-const isProtectedRoute = createRouteMatcher([
-  '/tasks(.*)', // Protects /tasks and any sub-routes
-  '/api/(.*)',  // Protects all API routes
-]);
+const isProtectedRoute = createRouteMatcher(['/tasks(.*)', '/api(.*)','/'])
 
-export default clerkMiddleware((auth, req) => {
-  if (isProtectedRoute(req)) {
-    auth.protect(); // Protect the route if it matches the defined criteria
+export default clerkMiddleware(async (auth, req) => {
+  const { userId, redirectToSignIn } = await auth()
+
+  if (!userId && isProtectedRoute(req)) {
+    // Add custom logic to run before redirecting
+
+    return redirectToSignIn()
   }
-});
+})
 
 export const config = {
   matcher: [
@@ -19,4 +19,4 @@ export const config = {
     // Always run for API routes
     '/(api|trpc)(.*)',
   ],
-};
+}
