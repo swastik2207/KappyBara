@@ -15,7 +15,6 @@ const updateTaskSchema = z.object({
 
 export async function PATCH(
   req: NextRequest,
-  context: { params: { id: string } }
 ) {
   try {
     const { pathname } = req.nextUrl;
