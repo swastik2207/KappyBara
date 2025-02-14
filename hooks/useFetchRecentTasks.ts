@@ -40,5 +40,6 @@ export const useFetchRecentTasks = () => {
       const token = await getToken(); // Fetch the token dynamically
       return fetchRecentTasks(token);
     },
+    staleTime: 3000
   });
 };

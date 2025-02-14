@@ -40,5 +40,6 @@ export const useFetchTasks = () => {
       const token = await getToken(); // Fetch the token dynamically
       return fetchTasks(token);
     },
+    staleTime: 500
   });
 };
