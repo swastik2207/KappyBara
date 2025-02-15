@@ -11,8 +11,6 @@ export const useCompletedTasksStore = create<CompletedTasksState>((set) => ({
   tasks: [],
   setTasks: (tasks) => {
     set({ tasks });
-
-    
     setTimeout(() => {
       set({ tasks: [] });
     }, 60000);

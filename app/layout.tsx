@@ -45,7 +45,7 @@ export default function RootLayout({
         >
           <Sidebar/>
 
-          <main id="__next"className="flex-grow p-6 ml-64 sm:ml-72"> {/* ✅ Space for sidebar */}
+          <main id="__next"className="flex-grow p-6 sm:ml-40 w-full"> {/* ✅ Space for sidebar */}
             {children}
           </main>
 
